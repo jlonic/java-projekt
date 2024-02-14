@@ -21,19 +21,5 @@ public class DatabaseConfig {
         dataSource.setPassword("123");
         return dataSource;
     }
-//    @Bean
-//    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-//        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-//        em.setDataSource(dataSource());
-//        em.setPackagesToScan("com.example.app1.model");
-//        return em;
-//    }
-//
-//    @Bean
-//    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
-//        JpaTransactionManager transactionManager = new JpaTransactionManager();
-//        transactionManager.setEntityManagerFactory(entityManagerFactory);
-//        return transactionManager;
-//    }
 }
 

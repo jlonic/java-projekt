@@ -23,5 +23,8 @@ public class ExerciseService {
     public Exercise getExerciseById(Long exerciseId){
         return this.exerciseRepository.getReferenceById(exerciseId);
     }
+    public List<String> selectMuscleGroups(){
+        return exerciseRepository.selectMuscleGroups();
+    }
 
 }

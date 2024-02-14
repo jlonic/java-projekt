@@ -4,11 +4,9 @@ import com.example.app1.model.Exercise;
 import com.example.app1.model.ExerciseSet;
 import com.example.app1.model.User;
 import com.example.app1.model.Workout;
-import com.example.app1.repository.ExerciseRepository;
-import com.example.app1.repository.UserRepository;
-import com.example.app1.repository.WorkoutRepository;
 import com.example.app1.service.ExerciseService;
 import com.example.app1.service.ExerciseSetService;
+import com.example.app1.service.UserService;
 import com.example.app1.service.WorkoutService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,30 +25,17 @@ public class WorkoutController {
     private final ExerciseService exerciseService;
     private final ExerciseSetService exerciseSetService;
     private final WorkoutService workoutService;
-    private final UserRepository userRepository;
-    private final ExerciseRepository exerciseRepository;
-    private final WorkoutRepository workoutRepository;
+    private final UserService userService;
 
     @Autowired
     public WorkoutController(ExerciseService exerciseService,
                              ExerciseSetService exerciseSetService,
                              WorkoutService workoutService,
-                             UserRepository userRepository,
-                             ExerciseRepository exerciseRepository,
-                             WorkoutRepository workoutRepository){
+                             UserService userService){
         this.exerciseService=exerciseService;
         this.exerciseSetService=exerciseSetService;
         this.workoutService=workoutService;
-        this.userRepository=userRepository;
-        this.exerciseRepository=exerciseRepository;
-        this.workoutRepository=workoutRepository;
-    }
-
-    @GetMapping("/create")
-    public String createWorkoutForm(HttpSession httpSession){
-        if (httpSession.getAttribute("user") != null) {
-            return "createWorkout";
-        } else return "redirect:/login";
+        this.userService=userService;
     }
 
     @PostMapping("/editWorkout")
@@ -61,7 +46,7 @@ public class WorkoutController {
             return "redirect:/login";
 
         Long id = (Long) httpSession.getAttribute("userId");
-        User user = userRepository.getReferenceById(id);
+        User user = userService.getUserById(id);
 
         Workout existingWorkout = workoutService.findWorkoutByDateAndUser(workoutDate, id);
         if (existingWorkout==null) {
@@ -70,7 +55,7 @@ public class WorkoutController {
             httpSession.setAttribute("workout", workout);
             workoutService.createWorkout(workout);
 
-            return "createWorkout";
+            return getExistingWorkout(httpSession, model, workout);
         }
         else return getExistingWorkout(httpSession, model, existingWorkout);
     }
@@ -80,12 +65,12 @@ public class WorkoutController {
         if (httpSession.getAttribute("user") == null)
             return "redirect:/login";
 
-        List<String> muscleGroups = exerciseRepository.selectMuscleGroups();
+        List<String> muscleGroups = exerciseService.selectMuscleGroups();
+
         model.addAttribute("muscleGroups", muscleGroups);
 
         return "/selectMuscleGroup";
     }
-
 
     @PostMapping("/addExercise")
     public String addExercise(@RequestParam("bodyPart") String bodyPart, Model model, HttpSession httpSession) {
@@ -105,7 +90,8 @@ public class WorkoutController {
         if (httpSession.getAttribute("user") == null)
             return "redirect:/login";
 
-        Exercise exercise = exerciseRepository.getReferenceById(exerciseId);
+        Exercise exercise = exerciseService.getExerciseById(exerciseId);
+
         ExerciseSet exerciseSet = new ExerciseSet();
         exerciseSet.setExercise(exercise);
         exerciseSet.setWorkout((Workout) httpSession.getAttribute("workout"));
@@ -116,16 +102,16 @@ public class WorkoutController {
         return "exerciseSet";
     }
 
-    @PostMapping("/saveExerciseSet")
+    @PostMapping("/existingWorkout")
     public String saveExerciseSet(@ModelAttribute("exerciseSet") ExerciseSet exerciseSet, HttpSession httpSession, Model model) {
         if (httpSession.getAttribute("user") == null)
             return "redirect:/login";
 
         Workout w = (Workout) httpSession.getAttribute("workout");
-        Workout workout = workoutRepository.getReferenceById(w.getWorkoutId());
+        Workout workout = workoutService.getById(w.getWorkoutId());
 
         Long exerciseId = (Long) httpSession.getAttribute("exerciseId");
-        Exercise exercise = exerciseRepository.getReferenceById(exerciseId);
+        Exercise exercise = exerciseService.getExerciseById(exerciseId);
 
         exerciseSet.setWorkout(workout);
         exerciseSet.setExercise(exercise);
@@ -161,7 +147,7 @@ public class WorkoutController {
 
 
         Workout w = (Workout) httpSession.getAttribute("workout");
-        Workout existingWorkout = workoutRepository.getReferenceById(w.getWorkoutId());
+        Workout existingWorkout = workoutService.getById(w.getWorkoutId());
 
         return getExistingWorkout(httpSession, model, existingWorkout);
     }
@@ -195,7 +181,7 @@ public class WorkoutController {
         exerciseSetService.deleteFromWorkout(exerciseSet.getSetId());
 
         Workout w = (Workout) httpSession.getAttribute("workout");
-        Workout existingWorkout = workoutRepository.getReferenceById(w.getWorkoutId());
+        Workout existingWorkout = workoutService.getById(w.getWorkoutId());
 
         return getExistingWorkout(httpSession, model, existingWorkout);
     }
@@ -205,21 +191,20 @@ public class WorkoutController {
         if (httpSession.getAttribute("user") == null)
             return "redirect:/login";
 
-        workoutRepository.deleteAllExercisesFromWorkout(workoutId);
-        Workout existingWorkout = workoutRepository.getReferenceById(workoutId);
-
+        workoutService.deleteAllExercisesFromWorkout(workoutId);
+        Workout existingWorkout = workoutService.getById(workoutId);
         return getExistingWorkout(httpSession, model, existingWorkout);
     }
 
     @PostMapping("/deleteWorkout")
-    public String deleteWorkout(@RequestParam("workoutId") Long workoutId, HttpSession httpSession){
+    public String deleteWorkout(@RequestParam("workoutId") Long workoutId, HttpSession httpSession, Model model){
         if (httpSession.getAttribute("user") == null)
             return "redirect:/login";
 
-        workoutRepository.deleteAllExercisesFromWorkout(workoutId);
-        workoutRepository.deleteWorkout(workoutId);
-
-        return "dashboard";
+        workoutService.deleteAllExercisesFromWorkout(workoutId);
+        workoutService.deleteWorkout(workoutId);
+        model.addAttribute("today", LocalDate.now());
+        return "redirect:/dashboard";
     }
 
     @PostMapping("/addNotes")
@@ -227,9 +212,9 @@ public class WorkoutController {
         if (httpSession.getAttribute("user") == null)
             return "redirect:/login";
 
-        Workout workout = workoutRepository.getReferenceById(workoutId);
+        Workout workout = workoutService.getById(workoutId);
         workout.setNotes(notes);
-        workoutRepository.save(workout);
+        workoutService.save(workout);
 
         return getExistingWorkout(httpSession, model, workout);
     }
@@ -239,20 +224,42 @@ public class WorkoutController {
         if (httpSession.getAttribute("user") == null)
             return "redirect:/login";
 
-        Workout workout = workoutRepository.getReferenceById(workoutId);
+        Workout workout = workoutService.getById(workoutId);
         workout.setNotes(null);
-        workoutRepository.save(workout);
+        workoutService.save(workout);
 
         return getExistingWorkout(httpSession, model, workout);
     }
 
+    @GetMapping("/pastWorkouts")
+    public String showPastWorkouts(HttpSession httpSession, Model model){
+        if (httpSession.getAttribute("user") == null)
+            return "redirect:/login";
+
+        Long userId = (Long) httpSession.getAttribute("userId");
+        List<Workout> pastWorkouts = workoutService.findWorkoutsBeforeToday(LocalDate.now(), userId);
+        pastWorkouts.sort(Comparator.comparing(Workout::getDate).reversed());
+
+        model.addAttribute("pastWorkouts", pastWorkouts);
+        model.addAttribute("totalWorkouts", pastWorkouts.size());
+
+        return "pastWorkouts";
+    }
+    @PostMapping("/pastWorkouts")
+    public String pastWorkouts(HttpSession httpSession, Model model, @RequestParam("workoutId") Long workoutId){
+        if (httpSession.getAttribute("user") == null)
+            return "redirect:/login";
+//        System.out.print(workoutId);
+
+        Workout workout = workoutService.getById(workoutId);
+        return getExistingWorkout(httpSession, model, workout);
+    }
 
 }
 /*TODO
-FILTER EXERCISES BY BODYPART MOZDA ? (MOZDA USELESS)
 COMPARE WITH OLD DATA TO SEE PROGRESS (LISTA SVIH (starih) VJEZBI SORTIRANA DATUMIMA),
     KLIK NA DATUM -> OTVORI STARI WORKOUT I USPOREDI (s cim/kako???)
-
+DASHBOARD DODATI NEXT WORKOUT I 'SEE PREVIOUS WORKOUTS' I MOZDA 'COPY WORKOUT'
 CARDIO TABLE MOZDA?? treba novi table u db
 
 COPY PREVIOUS WORKOUT (MOZDA?)

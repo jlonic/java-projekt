@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Past Workouts</title>
+</head>
+<body>
+<p>Total Workouts Found: <span th:text="${totalWorkouts}"></span></p>
+<table>
+    <thead>
+    <tr>
+        <th>Date</th>
+    </tr>
+    </thead>
+    <tbody>
+    <form th:each="workout : ${pastWorkouts}" th:action="@{/workouts/pastWorkouts}" method="post">
+        <tr>
+            <td>
+                <button type="submit" th:name="workoutId" th:value="${workout.workoutId}">
+                    <span th:text="${#temporals.dayOfWeekName(workout.date) + ' ' + #temporals.monthName(workout.date) + ' ' + #temporals.day(workout.date)}"></span><br>
+                </button>
+            </td>
+        </tr>
+    </form>
+    </tbody>
+</table>
+</body>
+</html>

@@ -5,9 +5,9 @@
     <title>Existing Workout</title>
 </head>
 <body>
-<h2>Existing Workout</h2>
 
-<p th:text="'Workout Date: ' + ${existingWorkout.date}"></p>
+<p th:text="${#temporals.dayOfWeekName(existingWorkout.date) + ' ' + #temporals.monthName(existingWorkout.date) + ' ' + #temporals.day(existingWorkout.date)}"></p>
+
 <p th:if="${existingWorkout.notes != null}" th:text="'Notes: ' + ${existingWorkout.notes}"></p>
 <form th:if="${existingWorkout.notes != null}" th:action="@{/workouts/deleteNotes}" method="post">
     <button type="submit" th:name="workoutId" th:value="${existingWorkout.getWorkoutId()}">Clear notes</button>

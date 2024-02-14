@@ -19,16 +19,18 @@ public class UserService {
         user.setPassword(hashPassword);
         userRepository.save(user);
     }
-
     public boolean authentication(User user){
         User dbUser = userRepository.findByUsername(user.getUsername());
 
         return dbUser != null && bCryptPasswordEncoder.matches(user.getPassword(), dbUser.getPassword());
     }
-
     public boolean isUsernameTaken(String username){
         User user = userRepository.findByUsername(username);
 
         return user != null;
+    }
+
+    public User getUserById(Long userId){
+        return userRepository.getReferenceById(userId);
     }
 }

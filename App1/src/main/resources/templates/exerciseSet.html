@@ -9,7 +9,7 @@
 
 <p th:text="'Exercise: ' + ${exercise.name}"></p>
 
-<form th:action="@{/workouts/saveExerciseSet}" method="post">
+<form th:action="@{/workouts/existingWorkout}" method="post">
     <label for="repetitions">Repetitions:</label>
     <input type="number" id="repetitions" name="repetitions" required>
 
@@ -21,6 +21,7 @@
     <br>
     <button type="submit">Save Exercise Set</button>
 </form>
+<a href="selectMuscleGroup">Return to selection</a>
 
 </body>
 </html>

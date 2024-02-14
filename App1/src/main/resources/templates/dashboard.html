@@ -1,13 +1,42 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
 </head>
 <body>
-<h2>Dashboard</h2>
+<div>
+    <p th:text="${#temporals.dayOfWeekName(today) + ' ' + #temporals.monthName(today) + ' ' + #temporals.day(today)}"></p>
+</div>
+<div th:if="${workoutToday != null}">
+    <h2>Workout for Today</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Exercise Name</th>
+            <th>Weight</th>
+            <th>Repetitions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="exercise, index : ${exercises}">
+            <td th:text="${exercise.name}"></td>
+            <td th:text="${exerciseSets[index.index].weight}"></td>
+            <td th:text="${exerciseSets[index.index].repetitions}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/workouts/selectMuscleGroup}">Add Exercise</a>
+</div>
 
+<div th:if="${workoutToday == null}">
+    <h2>No Workouts Scheduled for Today</h2>
 
+    <form action="/workouts/editWorkout" method="post">
+        <input type="hidden" id="workoutDate2" name="workoutDate" th:value="${today}" required />
+        <button type="submit">Create workout for today</button>
+    </form>
+</div>
 <br><br>
 <div>
     <form action="/workouts/editWorkout" method="post">
@@ -17,6 +46,7 @@
         <button type="submit">Create or Edit Workout</button>
     </form>
 </div>
+<div><a th:href="@{/workouts/pastWorkouts}">Show past workouts</a> </div>
 <br><br><br><br>
 <form action="/logout" method="post">
     <button type="submit">Logout</button>
