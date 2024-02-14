@@ -3,7 +3,6 @@ package com.example.app1.service;
 import com.example.app1.model.Workout;
 import com.example.app1.repository.WorkoutRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

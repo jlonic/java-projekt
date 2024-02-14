@@ -1,10 +1,7 @@
 package com.example.app1.service;
 
 import com.example.app1.model.Exercise;
-import com.example.app1.model.ExerciseSet;
 import com.example.app1.repository.ExerciseRepository;
-import com.example.app1.repository.ExerciseSetRepository;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
