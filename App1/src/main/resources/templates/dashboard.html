@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+</head>
+<body>
+<h2>Dashboard</h2>
+
+
+<br><br>
+<div>
+    <form action="/workouts/editWorkout" method="post">
+        <label for="workoutDate">Workout Date:</label>
+        <input type="date" id="workoutDate" name="workoutDate" required />
+
+        <button type="submit">Create or Edit Workout</button>
+    </form>
+</div>
+<br><br><br><br>
+<form action="/logout" method="post">
+    <button type="submit">Logout</button>
+</form>
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Area</title>
+</head>
+<body>
+<h2>Select Area</h2>
+
+<form th:action="@{/workouts/addExercise}" method="post">
+    <div th:each="muscleGroup : ${muscleGroups}">
+        <button type="submit" th:name="bodyPart" th:value="${muscleGroup}">
+            <span th:text="${muscleGroup}"></span>
+        </button>
+    </div>
+</form>
+</body>
+</html>

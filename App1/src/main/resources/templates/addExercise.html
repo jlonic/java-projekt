@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Exercise</title>
+</head>
+<body>
+<h2>Add Exercise</h2>
+
+<form th:action="@{/workouts/exerciseSet}" method="post">
+    <div th:each="exercise : ${exercises}" th:if="${exercise.bodyPart == bodyPart}">
+        <button type="submit" th:name="exerciseId" th:value="${exercise.exerciseId}">
+            <span th:text="${exercise.name}"></span>
+        </button>
+    </div>
+</form>
+<a href="selectMuscleGroup">Return to previous selection</a>
+
+</body>
+</html>
