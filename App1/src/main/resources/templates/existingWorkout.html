@@ -35,6 +35,9 @@
             <button type="submit" th:name="exerciseId" th:value="${exercise.getExerciseId()}">Delete</button>
         </form>
         </td>
+        <td><form th:action="@{/workouts/exerciseHistory}" method="get">
+            <button type="submit" th:name="exerciseId" th:value="${exercise.getExerciseId()}">History</button>
+        </form>
 
     </tr>
     </tbody>
@@ -42,6 +45,14 @@
 <form th:action="@{/workouts/removeAllExercises}" method="post">
     <button type="submit" th:name="workoutId" th:value="${existingWorkout.getWorkoutId()}">Clear All</button>
 </form><br><br>
+<form th:action="@{/workouts/copyWorkout}" method="post">
+<!--button that copies workout, when clicked it opens date picker and clicking the date submits-->
+    <label for="workoutDate"></label>
+    <input type="date" id="workoutDate" name="workoutDate" required />
+    <button type="submit" th:name="workoutId" th:value="${existingWorkout.getWorkoutId()}">Copy Workout</button>
+<p th:if="${error}" style="color: red;" th:text="${error}"></p>
+</form>
+
 <form th:action="@{/workouts/deleteWorkout}" method="post">
     <button type="submit" th:name="workoutId" th:value="${existingWorkout.getWorkoutId()}">Delete Workout</button>
 </form>

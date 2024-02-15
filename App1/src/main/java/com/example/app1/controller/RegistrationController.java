@@ -2,6 +2,7 @@ package com.example.app1.controller;
 
 import com.example.app1.model.User;
 import com.example.app1.service.UserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +19,10 @@ public class RegistrationController {
     public RegistrationController(UserService userService){ this.userService=userService;}
 
     @GetMapping("/registration")
-    public String showRegistrationForm(Model model){
+    public String showRegistrationForm(Model model, HttpSession httpSession){
+        if (httpSession.getAttribute("user") != null)
+            return "redirect:/dashboard";
+
         model.addAttribute("user", new User());
         return "registration";
     }

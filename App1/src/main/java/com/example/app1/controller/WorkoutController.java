@@ -39,7 +39,7 @@ public class WorkoutController {
     }
 
     @PostMapping("/editWorkout")
-    public String createWorkout(@ModelAttribute("workout") Workout workout,
+    public String editWorkout(@ModelAttribute("workout") Workout workout,
                                 HttpSession httpSession, Model model,
                                 @RequestParam("workoutDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate workoutDate) {
         if (httpSession.getAttribute("user") == null)
@@ -57,7 +57,7 @@ public class WorkoutController {
 
             return getExistingWorkout(httpSession, model, workout);
         }
-        else return getExistingWorkout(httpSession, model, existingWorkout);
+        return getExistingWorkout(httpSession, model, existingWorkout);
     }
 
     @GetMapping("/selectMuscleGroup")
@@ -91,6 +91,15 @@ public class WorkoutController {
             return "redirect:/login";
 
         Exercise exercise = exerciseService.getExerciseById(exerciseId);
+
+        Workout w = (Workout) httpSession.getAttribute("workout");
+        Workout workout = workoutService.getById(w.getWorkoutId());
+        List<ExerciseSet> exerciseSets = exerciseSetService.getExerciseSetsByWorkoutId(workout.getWorkoutId());
+        for (ExerciseSet es : exerciseSets) {
+            if (es.getExercise().getExerciseId().equals(exerciseId)) {
+                return editExerciseForm(exerciseId, model, httpSession);
+            }
+        }
 
         ExerciseSet exerciseSet = new ExerciseSet();
         exerciseSet.setExercise(exercise);
@@ -249,26 +258,56 @@ public class WorkoutController {
     public String pastWorkouts(HttpSession httpSession, Model model, @RequestParam("workoutId") Long workoutId){
         if (httpSession.getAttribute("user") == null)
             return "redirect:/login";
-//        System.out.print(workoutId);
 
         Workout workout = workoutService.getById(workoutId);
         return getExistingWorkout(httpSession, model, workout);
     }
+    @PostMapping("/copyWorkout")
+    //copy workout to new date which is in workoutDate
+    public String copyWorkout(@RequestParam("workoutId") Long workoutId, @RequestParam("workoutDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate workoutDate, HttpSession httpSession, Model model){
+        if (httpSession.getAttribute("user") == null)
+            return "redirect:/login";
 
+        if (workoutService.findWorkoutByDateAndUser(workoutDate, (Long) httpSession.getAttribute("userId"))!=null) {
+            model.addAttribute("error", "Workout on that date already exists");
+            return getExistingWorkout(httpSession, model, workoutService.getById(workoutId));
+        }
+
+        Workout workout = workoutService.getById(workoutId);
+        Workout newWorkout = new Workout();
+        newWorkout.setUser(workout.getUser());
+        newWorkout.setDate(workoutDate);
+        newWorkout.setNotes(workout.getNotes());
+        workoutService.createWorkout(newWorkout);
+
+        List<ExerciseSet> exerciseSets = exerciseSetService.getExerciseSetsByWorkoutId(workoutId);
+        for (ExerciseSet es : exerciseSets) {
+            ExerciseSet newExerciseSet = new ExerciseSet();
+            newExerciseSet.setWorkout(newWorkout);
+            newExerciseSet.setExercise(es.getExercise());
+            newExerciseSet.setWeight(es.getWeight());
+            newExerciseSet.setRepetitions(es.getRepetitions());
+            exerciseSetService.saveExerciseSet(newExerciseSet);
+        }
+
+        return getExistingWorkout(httpSession, model, newWorkout);
+    }
+
+    @GetMapping("/exerciseHistory")
+    public String exerciseHistory(@RequestParam("exerciseId") Long exerciseId, HttpSession httpSession, Model model){
+        if (httpSession.getAttribute("user") == null)
+            return "redirect:/login";
+
+        List<ExerciseSet> exerciseSets = exerciseSetService.getExerciseHistory(exerciseId, (Long) httpSession.getAttribute("userId"), LocalDate.now());
+        exerciseSets.sort(Comparator.comparing(ExerciseSet::getWorkoutDate).reversed());
+
+        model.addAttribute("exerciseSets", exerciseSets);
+        model.addAttribute("exercise", exerciseService.getExerciseById(exerciseId));
+        return "exerciseHistory";
+    }
 }
 /*TODO
-COMPARE WITH OLD DATA TO SEE PROGRESS (LISTA SVIH (starih) VJEZBI SORTIRANA DATUMIMA),
-    KLIK NA DATUM -> OTVORI STARI WORKOUT I USPOREDI (s cim/kako???)
-DASHBOARD DODATI NEXT WORKOUT I 'SEE PREVIOUS WORKOUTS' I MOZDA 'COPY WORKOUT'
-CARDIO TABLE MOZDA?? treba novi table u db
-
-COPY PREVIOUS WORKOUT (MOZDA?)
-TRACK PERSONAL RECORD MOZDA? (<mozda prekomplicirano s mojon db>
-    <treba useru dodati exerciseset listu koja bi pamtila>
-
-
-CSS SREDITI (mozda tailwindcss?)
-
-???
-
+STYLES.CSS
+popraviti html(dodati dashboard na sve) itd
+cool text area box za notes
  */

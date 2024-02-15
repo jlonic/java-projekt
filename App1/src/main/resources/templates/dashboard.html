@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/styles.css}" />
     <title>Dashboard</title>
 </head>
 <body>
@@ -23,6 +24,10 @@
             <td th:text="${exercise.name}"></td>
             <td th:text="${exerciseSets[index.index].weight}"></td>
             <td th:text="${exerciseSets[index.index].repetitions}"></td>
+            <td><form th:action="@{/workouts/exerciseHistory}" method="get">
+                <button type="submit" th:name="exerciseId" th:value="${exercise.getExerciseId()}">History</button>
+            </form>
+
         </tr>
         </tbody>
     </table>

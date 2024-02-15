@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Entity @Getter @Setter @Table(name = "exercise_sets")
 public class ExerciseSet {
     @Id @Column(name = "set_id") @JsonIgnore
@@ -19,4 +21,9 @@ public class ExerciseSet {
     private int repetitions;
     @Column(name = "weight")
     private double weight;
+
+    public LocalDate getWorkoutDate() {
+        return this.workout.getDate();
+    }
+
 }

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h2 th:text="${'Exercise History for ' + exercise.name}"></h2>
+
+<table>
+    <thead>
+    <tr>
+        <th>Date</th>
+        <th>Weight</th>
+        <th>Repetitions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="exerciseSet : ${exerciseSets}">
+        <td th:text="${#temporals.dayOfWeekName(exerciseSet.workoutDate) + ' ' + #temporals.monthName(exerciseSet.workoutDate) + ' ' + #temporals.day(exerciseSet.workoutDate)}"></td>
+        <td th:text="${exerciseSet.weight}"></td>
+        <td th:text="${exerciseSet.repetitions}"></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

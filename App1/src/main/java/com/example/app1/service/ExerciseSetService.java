@@ -1,12 +1,11 @@
 package com.example.app1.service;
 
 import com.example.app1.model.ExerciseSet;
-import com.example.app1.model.User;
 import com.example.app1.repository.ExerciseSetRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -31,4 +30,9 @@ public class ExerciseSetService {
     public void deleteFromWorkout(Long exerciseSetId){
         exerciseSetRepository.deleteExerciseSet(exerciseSetId);
     }
+
+    public List<ExerciseSet> getExerciseHistory(Long exerciseId, Long userId, LocalDate date){
+        return exerciseSetRepository.getExerciseHistory(exerciseId, userId, date);
+    }
+
 }
