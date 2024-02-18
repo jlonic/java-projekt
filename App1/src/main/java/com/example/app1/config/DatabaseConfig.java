@@ -6,7 +6,6 @@ import javax.sql.DataSource;
 
 @Configuration
 public class DatabaseConfig {
-
     @Bean
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
@@ -17,4 +16,3 @@ public class DatabaseConfig {
         return dataSource;
     }
 }
-

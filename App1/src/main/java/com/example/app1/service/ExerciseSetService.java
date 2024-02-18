@@ -14,25 +14,19 @@ public class ExerciseSetService {
     private ExerciseSetRepository exerciseSetRepository;
 
     public void saveExerciseSet(ExerciseSet exerciseSet){this.exerciseSetRepository.save(exerciseSet);}
-
     public List<ExerciseSet> getExerciseSetsByWorkoutId(Long workoutId){
         return exerciseSetRepository.findByWorkoutId(workoutId);
     }
-
-    public ExerciseSet getByExerciseId(Long exerciseId){
-        return exerciseSetRepository.getByExerciseId(exerciseId);
+    public ExerciseSet getByExerciseIdAndWorkoutId(Long exerciseId, Long workoutId){
+        return exerciseSetRepository.getByExerciseIdAndWorkoutId(exerciseId, workoutId);
     }
-
     public ExerciseSet getExerciseSetById(Long exerciseSetId){
         return exerciseSetRepository.getReferenceById(exerciseSetId);
     }
-
     public void deleteFromWorkout(Long exerciseSetId){
         exerciseSetRepository.deleteExerciseSet(exerciseSetId);
     }
-
     public List<ExerciseSet> getExerciseHistory(Long exerciseId, Long userId, LocalDate date){
         return exerciseSetRepository.getExerciseHistory(exerciseId, userId, date);
     }
-
 }

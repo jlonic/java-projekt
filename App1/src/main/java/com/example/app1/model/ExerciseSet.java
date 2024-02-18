@@ -10,8 +10,8 @@ import java.time.LocalDate;
 @Entity @Getter @Setter @Table(name = "exercise_sets")
 public class ExerciseSet {
     @Id @Column(name = "set_id") @JsonIgnore
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "exercise_sets_seq")
-    @SequenceGenerator(name = "exercise_sets_seq", sequenceName = "exercise_sets_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "exercise_sets_set_id_seq")
+    @SequenceGenerator(name = "exercise_sets_set_id_seq", sequenceName = "exercise_sets_set_id_seq", allocationSize = 1)
     private Long setId;
     @ManyToOne @JoinColumn(name = "workout_id", nullable = false)
     private Workout workout;

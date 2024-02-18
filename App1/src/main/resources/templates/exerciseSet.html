@@ -2,26 +2,38 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/styles.css}" />
     <title>Exercise Set</title>
 </head>
 <body>
-<h2>Exercise Set</h2>
-
-<p th:text="'Exercise: ' + ${exercise.name}"></p>
-
-<form th:action="@{/workouts/existingWorkout}" method="post">
-    <label for="repetitions">Repetitions:</label>
-    <input type="number" id="repetitions" name="repetitions" required>
-
-    <br>
-
-    <label for="weight">Weight:</label>
-    <input type="number" id="weight" name="weight" required>
-
-    <br>
-    <button type="submit">Save Exercise Set</button>
-</form>
-<a href="selectMuscleGroup">Return to selection</a>
-
+<ul class="navbar">
+    <li><a th:href="@{/workouts/pastWorkouts}">Show past workouts</a></li>
+    <li><a th:href="@{/dashboard}" >Dashboard</a></li>
+    <li><a th:href="@{/workouts/upcomingWorkouts}">Show upcoming workouts</a></li>
+</ul>
+<div class="center-container">
+<table class="workoutTable">
+    <thead>
+        <tr>
+            <th th:text="${exercise.name}"></th>
+        </tr>
+    </thead>
+<tbody>
+<tr>
+    <td>
+        <form th:action="@{/workouts/existingWorkout}" method="post">
+            <label for="weight"></label>
+            <input type="number" id="weight" name="weight" th:placeholder="'Weight'" required>
+            <br>
+            <label for="repetitions"></label>
+            <input type="number" id="repetitions" name="repetitions" th:placeholder="'Repetitions'" required>
+            <br><br>
+            <button type="submit">Save Exercise Set</button>
+        </form><br>
+        <a href="selectMuscleGroup" class="addExercise">Return to selection</a>
+    </td>
+</tbody>
+</table>
+</div>
 </body>
 </html>

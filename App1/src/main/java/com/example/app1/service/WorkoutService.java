@@ -36,5 +36,7 @@ public class WorkoutService {
     public List<Workout> findWorkoutsBeforeToday(LocalDate date, Long userId){
         return workoutRepository.findWorkoutsBeforeToday(date, userId);
     }
-
+    public List<Workout> findWorkoutsAfterToday(LocalDate date, Long userId){
+        return workoutRepository.findWorkoutsAfterToday(date, userId);
+    }
 }

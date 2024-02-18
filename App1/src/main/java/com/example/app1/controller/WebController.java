@@ -19,19 +19,20 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @Controller @RequestMapping("/workouts")
-public class WorkoutController {
+public class WebController {
     private final ExerciseService exerciseService;
     private final ExerciseSetService exerciseSetService;
     private final WorkoutService workoutService;
     private final UserService userService;
 
     @Autowired
-    public WorkoutController(ExerciseService exerciseService,
-                             ExerciseSetService exerciseSetService,
-                             WorkoutService workoutService,
-                             UserService userService){
+    public WebController(ExerciseService exerciseService,
+                         ExerciseSetService exerciseSetService,
+                         WorkoutService workoutService,
+                         UserService userService){
         this.exerciseService=exerciseService;
         this.exerciseSetService=exerciseSetService;
         this.workoutService=workoutService;
@@ -135,7 +136,11 @@ public class WorkoutController {
         if (httpSession.getAttribute("user") == null)
             return "redirect:/login";
 
-        ExerciseSet exerciseSet = exerciseSetService.getByExerciseId(exerciseId);
+        Workout w = (Workout) httpSession.getAttribute("workout");
+        Workout existingWorkout = workoutService.getById(w.getWorkoutId());
+
+        ExerciseSet exerciseSet = exerciseSetService.getByExerciseIdAndWorkoutId(exerciseId, existingWorkout.getWorkoutId());
+
         httpSession.setAttribute("exerciseSetId", exerciseSet.getSetId());
         model.addAttribute("exercise", exerciseSet.getExercise());
         model.addAttribute("exerciseSet", exerciseSet);
@@ -186,11 +191,12 @@ public class WorkoutController {
         if (httpSession.getAttribute("user") == null)
             return "redirect:/login";
 
-        ExerciseSet exerciseSet = exerciseSetService.getByExerciseId(exerciseId);
-        exerciseSetService.deleteFromWorkout(exerciseSet.getSetId());
-
         Workout w = (Workout) httpSession.getAttribute("workout");
         Workout existingWorkout = workoutService.getById(w.getWorkoutId());
+
+        ExerciseSet exerciseSet = exerciseSetService.getByExerciseIdAndWorkoutId(exerciseId, existingWorkout.getWorkoutId());
+        exerciseSetService.deleteFromWorkout(exerciseSet.getSetId());
+
 
         return getExistingWorkout(httpSession, model, existingWorkout);
     }
@@ -225,6 +231,9 @@ public class WorkoutController {
         workout.setNotes(notes);
         workoutService.save(workout);
 
+        if (Objects.equals(workout.getDate(), LocalDate.now()))
+            return "redirect:/dashboard";
+
         return getExistingWorkout(httpSession, model, workout);
     }
 
@@ -236,6 +245,9 @@ public class WorkoutController {
         Workout workout = workoutService.getById(workoutId);
         workout.setNotes(null);
         workoutService.save(workout);
+
+        if (Objects.equals(workout.getDate(), LocalDate.now()))
+            return "redirect:/dashboard";
 
         return getExistingWorkout(httpSession, model, workout);
     }
@@ -263,7 +275,6 @@ public class WorkoutController {
         return getExistingWorkout(httpSession, model, workout);
     }
     @PostMapping("/copyWorkout")
-    //copy workout to new date which is in workoutDate
     public String copyWorkout(@RequestParam("workoutId") Long workoutId, @RequestParam("workoutDate") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate workoutDate, HttpSession httpSession, Model model){
         if (httpSession.getAttribute("user") == null)
             return "redirect:/login";
@@ -305,9 +316,26 @@ public class WorkoutController {
         model.addAttribute("exercise", exerciseService.getExerciseById(exerciseId));
         return "exerciseHistory";
     }
+    @GetMapping("/upcomingWorkouts")
+    public String upcomingWorkouts(HttpSession httpSession, Model model){
+        if (httpSession.getAttribute("user") == null)
+            return "redirect:/login";
+
+        Long userId = (Long) httpSession.getAttribute("userId");
+        List<Workout> upcomingWorkouts = workoutService.findWorkoutsAfterToday(LocalDate.now(), userId);
+        upcomingWorkouts.sort(Comparator.comparing(Workout::getDate));
+
+        model.addAttribute("upcomingWorkouts", upcomingWorkouts);
+        model.addAttribute("totalWorkouts", upcomingWorkouts.size());
+
+        return "upcomingWorkouts";
+    }
+    @PostMapping("/upcomingWorkouts")
+    public String upcomingWorkouts(HttpSession httpSession, Model model, @RequestParam("workoutId") Long workoutId){
+        if (httpSession.getAttribute("user") == null)
+            return "redirect:/login";
+
+        Workout workout = workoutService.getById(workoutId);
+        return getExistingWorkout(httpSession, model, workout);
+    }
 }
-/*TODO
-STYLES.CSS
-popraviti html(dodati dashboard na sve) itd
-cool text area box za notes
- */

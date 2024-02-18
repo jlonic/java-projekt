@@ -1,61 +1,76 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/styles.css}" />
     <title>Dashboard</title>
 </head>
 <body>
-<div>
-    <p th:text="${#temporals.dayOfWeekName(today) + ' ' + #temporals.monthName(today) + ' ' + #temporals.day(today)}"></p>
-</div>
-<div th:if="${workoutToday != null}">
-    <h2>Workout for Today</h2>
-    <table>
-        <thead>
-        <tr>
-            <th>Exercise Name</th>
-            <th>Weight</th>
-            <th>Repetitions</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="exercise, index : ${exercises}">
-            <td th:text="${exercise.name}"></td>
-            <td th:text="${exerciseSets[index.index].weight}"></td>
-            <td th:text="${exerciseSets[index.index].repetitions}"></td>
-            <td><form th:action="@{/workouts/exerciseHistory}" method="get">
-                <button type="submit" th:name="exerciseId" th:value="${exercise.getExerciseId()}">History</button>
-            </form>
+    <ul class="navbar">
+        <li><a th:href="@{/workouts/pastWorkouts}">Show past workouts</a></li>
+        <li><a th:href="@{/dashboard}" >Dashboard</a></li>
+        <li><a th:href="@{/workouts/upcomingWorkouts}">Show upcoming workouts</a></li>
+    </ul>
+<div class="bigContainer">
+    <div class="leftContainer">
+        <form action="/workouts/editWorkout" method="post">
+            <label for="workoutDate">Workout Date</label>
+            <input type="date" id="workoutDate" name="workoutDate" required />
 
-        </tr>
-        </tbody>
-    </table>
-    <a th:href="@{/workouts/selectMuscleGroup}">Add Exercise</a>
-</div>
+            <button type="submit">Edit Workout</button>
+        </form>
+    </div>
+<div class="center-container">
+    <div th:if="${workoutToday != null}" class="workoutTable">
+        <p th:text="${#temporals.dayOfWeekName(today) + ' ' + #temporals.monthName(today) + ' ' + #temporals.day(today)}" class="date"></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Exercise Name</th>
+                    <th>Weight</th>
+                    <th>Repetitions</th>
+                    <th><form th:action="@{/workouts/editWorkout}" method="post">
+                        <button type="submit" th:name="workoutDate" th:value="${workoutToday.date}">Edit Workout</button></form></th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr th:each="exercise, index : ${exercises}">
+                <td th:text="${exercise.name}"></td>
+                <td th:text="${exerciseSets[index.index].weight}"></td>
+                <td th:text="${exerciseSets[index.index].repetitions}"></td>
+                <td><form th:action="@{/workouts/exerciseHistory}" method="get">
+                    <button type="submit" th:name="exerciseId" th:value="${exercise.getExerciseId()}">History</button>
+                </form></td>
 
-<div th:if="${workoutToday == null}">
-    <h2>No Workouts Scheduled for Today</h2>
+            </tr>
+            </tbody>
+        </table>
+        <br>
+        <a th:href="@{/workouts/selectMuscleGroup}" class="addExercise">Add Exercise</a>
+    </div>
+<div th:if="${workoutToday == null}" class="noWorkoutToday">
 
-    <form action="/workouts/editWorkout" method="post">
+    <form action="/workouts/editWorkout" method="post" class="workoutTable">
         <input type="hidden" id="workoutDate2" name="workoutDate" th:value="${today}" required />
         <button type="submit">Create workout for today</button>
     </form>
 </div>
-<br><br>
-<div>
-    <form action="/workouts/editWorkout" method="post">
-        <label for="workoutDate">Workout Date:</label>
-        <input type="date" id="workoutDate" name="workoutDate" required />
-
-        <button type="submit">Create or Edit Workout</button>
+</div>
+    <div class="rightContainer" th:if="${workoutToday != null}">
+        <form th:action="@{/workouts/addNotes}" method="post">
+            <label for="notes">Notes</label><br>
+            <textarea id="notes" name="notes" rows="4" cols="50" th:text="${workoutToday.notes}"></textarea><br>
+            <button type="submit" th:name="workoutId" th:value="${workoutToday.getWorkoutId()}">Save notes</button>
+        </form><br>
+        <form th:if="${workoutToday.notes != null}" th:action="@{/workouts/deleteNotes}" method="post">
+            <button type="submit" th:name="workoutId" th:value="${workoutToday.getWorkoutId()}">Clear notes</button>
+        </form>
+    </div>
+</div>
+<div class="logoutButton">
+    <form action="/logout" method="post">
+        <button type="submit" class="addExercise">Logout</button>
     </form>
 </div>
-<div><a th:href="@{/workouts/pastWorkouts}">Show past workouts</a> </div>
-<br><br><br><br>
-<form action="/logout" method="post">
-    <button type="submit">Logout</button>
-</form>
-
 </body>
 </html>

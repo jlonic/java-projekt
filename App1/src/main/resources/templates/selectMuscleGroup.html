@@ -2,17 +2,32 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/styles.css}" />
     <title>Select Area</title>
 </head>
 <body>
-<h2>Select Area</h2>
+<ul class="navbar">
+    <li><a th:href="@{/workouts/pastWorkouts}">Show past workouts</a></li>
+    <li><a th:href="@{/dashboard}" >Dashboard</a></li>
+    <li><a th:href="@{/workouts/upcomingWorkouts}">Show upcoming workouts</a></li>
+</ul>
 
+<div class="center-container">
+<div class="selectMuscleGroupTable">
 <form th:action="@{/workouts/addExercise}" method="post">
-    <div th:each="muscleGroup : ${muscleGroups}">
+    <table>
+        <tbody>
+    <tr th:each="muscleGroup : ${muscleGroups}">
+        <td>
         <button type="submit" th:name="bodyPart" th:value="${muscleGroup}">
             <span th:text="${muscleGroup}"></span>
         </button>
-    </div>
+        </td>
+    </tr>
+    </tbody>
+    </table>
 </form>
+</div>
+</div>
 </body>
 </html>

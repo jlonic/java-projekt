@@ -16,12 +16,10 @@ public class ExerciseService {
     public List<Exercise> getAllExercises(){
         return exerciseRepository.findAll();
     }
-
     public Exercise getExerciseById(Long exerciseId){
         return this.exerciseRepository.getReferenceById(exerciseId);
     }
     public List<String> selectMuscleGroups(){
         return exerciseRepository.selectMuscleGroups();
     }
-
 }

@@ -11,5 +11,4 @@ import java.util.List;
 public interface ExerciseRepository extends JpaRepository<Exercise, Long> {
     @Query("SELECT DISTINCT  e.bodyPart FROM Exercise e ORDER BY e.bodyPart")
     List<String> selectMuscleGroups();
-
 }

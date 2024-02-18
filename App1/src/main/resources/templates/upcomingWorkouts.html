@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/styles.css}" />
-    <title>Past Workouts</title>
+    <title>Upcoming Workouts</title>
 </head>
 <body>
 <ul class="navbar">
@@ -15,11 +15,11 @@
 <table class="workoutTable">
     <thead>
     <tr>
-        <th>Past Workouts</th>
+        <th>Upcoming Workouts</th>
     </tr>
     </thead>
     <tbody>
-    <form th:each="workout : ${pastWorkouts}" th:action="@{/workouts/pastWorkouts}" method="post">
+    <form th:each="workout : ${upcomingWorkouts}" th:action="@{/workouts/upcomingWorkouts}" method="post">
         <tr>
             <td>
                 <button type="submit" th:name="workoutId" th:value="${workout.workoutId}">

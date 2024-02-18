@@ -2,30 +2,42 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/styles.css}" />
     <title>Edit Exercise</title>
 </head>
 <body>
-<h2>Edit Exercise</h2>
+<ul class="navbar">
+    <li><a th:href="@{/workouts/pastWorkouts}">Show past workouts</a></li>
+    <li><a th:href="@{/dashboard}" >Dashboard</a></li>
+    <li><a th:href="@{/workouts/upcomingWorkouts}">Show upcoming workouts</a></li>
+</ul>
+<div class="center-container">
+    <table class="workoutTable">
+        <thead>
+        <tr>
+            <th th:text="${exercise.name}"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <form th:action="@{/workouts/editExercise}" method="post">
+                    <p>Weight</p>
+                    <label for="weight"></label>
+                    <input type="number" id="weight" name="weight" th:value="${exerciseSet.weight}" required>
 
-<form th:action="@{/workouts/editExercise}" method="post">
+                    <br>
+                    <p>Repetitions</p>
+                    <label for="repetitions"></label>
+                    <input type="number" id="repetitions" name="repetitions" th:value="${exerciseSet.repetitions}" required>
 
-    <p>Exercise Name:</p>
-    <span th:text="${exercise.name}"></span>
+                    <br><br>
 
-    <br>
-
-    <label for="weight">Weight:</label>
-    <input type="number" id="weight" name="weight" th:value="${exerciseSet.weight}" required>
-
-    <br>
-
-    <label for="repetitions">Repetitions:</label>
-    <input type="number" id="repetitions" name="repetitions" th:value="${exerciseSet.repetitions}" required>
-
-    <br>
-
-    <button type="submit">Save Exercise</button>
-</form>
-
+                    <button type="submit">Save Exercise</button>
+                </form>
+            </td>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>

@@ -2,14 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/styles.css}" />
+    <title>Exercise History</title>
 </head>
 <body>
+<ul class="navbar">
+    <li><a th:href="@{/workouts/pastWorkouts}">Show past workouts</a></li>
+    <li><a th:href="@{/dashboard}" >Dashboard</a></li>
+    <li><a th:href="@{/workouts/upcomingWorkouts}">Show upcoming workouts</a></li>
+</ul>
 
-<h2 th:text="${'Exercise History for ' + exercise.name}"></h2>
-
-<table>
+<div th:if="${#lists.isEmpty(exerciseSets)}" class="center-container">
+    <p>No exercise history found.</p>
+</div>
+<div class="center-container">
+<table th:if="${not #lists.isEmpty(exerciseSets)}" class="workoutTable">
     <thead>
+    <tr> <th th:text="${exercise.name}" colspan="3"></th></tr>
     <tr>
         <th>Date</th>
         <th>Weight</th>
@@ -24,6 +33,6 @@
     </tr>
     </tbody>
 </table>
-
+</div>
 </body>
 </html>

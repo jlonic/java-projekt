@@ -2,19 +2,37 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/styles.css}" />
     <title>Add Exercise</title>
 </head>
 <body>
-<h2>Add Exercise</h2>
+    <ul class="navbar">
+        <li><a th:href="@{/workouts/pastWorkouts}">Show past workouts</a></li>
+        <li><a th:href="@{/dashboard}" >Dashboard</a></li>
+        <li><a th:href="@{/workouts/upcomingWorkouts}">Show upcoming workouts</a></li>
+    </ul>
 
-<form th:action="@{/workouts/exerciseSet}" method="post">
-    <div th:each="exercise : ${exercises}" th:if="${exercise.bodyPart == bodyPart}">
-        <button type="submit" th:name="exerciseId" th:value="${exercise.exerciseId}">
-            <span th:text="${exercise.name}"></span>
-        </button>
+    <div class="bigContainer">
+        <div class="leftContainer">
+            <a href="selectMuscleGroup" class="addExercise">Go Back</a>
+        </div>
     </div>
-</form>
-<a href="selectMuscleGroup">Return to previous selection</a>
-
+    <div class="center-container">
+        <div class="selectMuscleGroupTable">
+            <form th:action="@{/workouts/exerciseSet}" method="post">
+                <table>
+                    <tbody>
+                        <tr th:each="exercise : ${exercises}" th:if="${exercise.bodyPart == bodyPart}">
+                            <td>
+                                <button type="submit" th:name="exerciseId" th:value="${exercise.exerciseId}">
+                                    <span th:text="${exercise.name}"></span>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

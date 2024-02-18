@@ -2,24 +2,36 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/styles.css}" />
     <title>Existing Workout</title>
 </head>
 <body>
+<ul class="navbar">
+    <li><a th:href="@{/workouts/pastWorkouts}">Show past workouts</a></li>
+    <li><a th:href="@{/dashboard}" >Dashboard</a></li>
+    <li><a th:href="@{/workouts/upcomingWorkouts}">Show upcoming workouts</a></li>
+</ul>
 
-<p th:text="${#temporals.dayOfWeekName(existingWorkout.date) + ' ' + #temporals.monthName(existingWorkout.date) + ' ' + #temporals.day(existingWorkout.date)}"></p>
 
-<p th:if="${existingWorkout.notes != null}" th:text="'Notes: ' + ${existingWorkout.notes}"></p>
-<form th:if="${existingWorkout.notes != null}" th:action="@{/workouts/deleteNotes}" method="post">
-    <button type="submit" th:name="workoutId" th:value="${existingWorkout.getWorkoutId()}">Clear notes</button>
+<div class="bigContainer">
+<div class="leftContainer">
+<form th:action="@{/workouts/copyWorkout}" method="post">
+    <label for="workoutDate"></label>
+    <input type="date" id="workoutDate" name="workoutDate" required />
+    <button type="submit" th:name="workoutId" th:value="${existingWorkout.getWorkoutId()}">Copy Workout</button>
+    <p th:if="${error}" style="color: red;" th:text="${error}"></p>
 </form>
+</div>
+<div class="center-container">
+    <div class="workoutTable">
+<p th:text="${#temporals.dayOfWeekName(existingWorkout.date) + ' ' + #temporals.monthName(existingWorkout.date) + ' ' + #temporals.day(existingWorkout.date)}" class="date"></p>
+
 <table>
     <thead>
     <tr>
         <th>Exercise Name</th>
         <th>Weight</th>
         <th>Repetitions</th>
-        <th> </th>
-        <th> </th>
     </tr>
     </thead>
     <tbody>
@@ -32,7 +44,7 @@
         </form>
         </td>
         <td><form th:action="@{/workouts/removeExercise}" method="post">
-            <button type="submit" th:name="exerciseId" th:value="${exercise.getExerciseId()}">Delete</button>
+            <button type="submit" th:name="exerciseId" th:value="${exercise.getExerciseId()}">Remove</button>
         </form>
         </td>
         <td><form th:action="@{/workouts/exerciseHistory}" method="get">
@@ -42,26 +54,32 @@
     </tr>
     </tbody>
 </table>
+        <div class="existingWorkoutButtons">
+<a th:href="@{/workouts/selectMuscleGroup}" class="addExercise">Add Exercise</a>
 <form th:action="@{/workouts/removeAllExercises}" method="post">
     <button type="submit" th:name="workoutId" th:value="${existingWorkout.getWorkoutId()}">Clear All</button>
-</form><br><br>
-<form th:action="@{/workouts/copyWorkout}" method="post">
-<!--button that copies workout, when clicked it opens date picker and clicking the date submits-->
-    <label for="workoutDate"></label>
-    <input type="date" id="workoutDate" name="workoutDate" required />
-    <button type="submit" th:name="workoutId" th:value="${existingWorkout.getWorkoutId()}">Copy Workout</button>
-<p th:if="${error}" style="color: red;" th:text="${error}"></p>
 </form>
-
 <form th:action="@{/workouts/deleteWorkout}" method="post">
     <button type="submit" th:name="workoutId" th:value="${existingWorkout.getWorkoutId()}">Delete Workout</button>
 </form>
-<form th:action="@{/workouts/addNotes}" method="post">
-    <label for="notes">Notes:</label><br>
-    <textarea id="notes" name="notes" rows="4" cols="50"></textarea><br>
-    <button type="submit" th:name="workoutId" th:value="${existingWorkout.getWorkoutId()}">Edit notes</button>
-</form>
-<a th:href="@{/workouts/selectMuscleGroup}">Add Exercise</a>
+</div>
+</div>
+</div>
+    <div class="rightContainer">
+        <form th:action="@{/workouts/addNotes}" method="post">
+            <label for="notes">Notes</label><br>
+            <textarea id="notes" name="notes" rows="4" cols="50" th:text="${existingWorkout.notes}"></textarea><br>
+            <button type="submit" th:name="workoutId" th:value="${existingWorkout.getWorkoutId()}">Save notes</button>
+        </form><br>
+        <form th:if="${existingWorkout.notes != null}" th:action="@{/workouts/deleteNotes}" method="post">
+            <button type="submit" th:name="workoutId" th:value="${existingWorkout.getWorkoutId()}">Clear notes</button>
+        </form>
+    </div>
+</div>
+
+
+
+
 
 </body>
 </html>
