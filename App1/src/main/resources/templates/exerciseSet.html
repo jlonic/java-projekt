@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/styles.css}" />
@@ -30,7 +30,7 @@
             <br><br>
             <button type="submit">Save Exercise Set</button>
         </form><br>
-        <a href="selectMuscleGroup" class="addExercise">Return to selection</a>
+        <a th:href="@{/workouts/selectMuscleGroup}" class="addExercise">Return to selection</a>
     </td>
 </tbody>
 </table>

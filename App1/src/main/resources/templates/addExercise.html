@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" th:href="@{/styles.css}" />
@@ -14,7 +14,7 @@
 
     <div class="bigContainer">
         <div class="leftContainer">
-            <a href="selectMuscleGroup" class="addExercise">Go Back</a>
+            <a th:href="@{/workouts/selectMuscleGroup}" class="addExercise">Go Back</a>
         </div>
     </div>
     <div class="center-container">
