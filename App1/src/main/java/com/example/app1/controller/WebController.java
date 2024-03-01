@@ -70,7 +70,7 @@ public class WebController {
 
         model.addAttribute("muscleGroups", muscleGroups);
 
-        return "/selectMuscleGroup";
+        return "selectMuscleGroup";
     }
 
     @PostMapping("/addExercise")
