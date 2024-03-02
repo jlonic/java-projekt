@@ -28,4 +28,4 @@ Make sure you have Docker installed and running on your machine.
    ```bash
    docker-compose up
 
-  The app should now be running. You can access it at https://localhost:8080/login
+  The app should now be running. You can access it at http://localhost:8080/login
